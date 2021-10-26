@@ -1,0 +1,33 @@
+#!/bin/sh
+
+scriptDir="$( cd "$( dirname "$0" )"; pwd -P )"
+
+name="NativePlugin"
+archive="${name}.xcarchive"
+
+projectDir="${scriptDir}/${name}.xcodeproj"
+buildDir="${scriptDir}/build"
+libDir="Products/usr/local/lib"
+bundlesDir="Products/Library/Bundles"
+targetDir="${scriptDir}/../../Assets/NativePlugin"
+
+
+# macOS
+platform="macOS"
+configBuildDir="${buildDir}/${platform}"
+archiveDir="${configBuildDir}/${archive}"
+src="${archiveDir}/${bundlesDir}/${name}.bundle"
+dstDir="${targetDir}/${platform}"
+xcodebuild \
+    -project "${projectDir}" \
+    -configuration Relese \
+    -scheme "NativePlugin macOS" \
+    -sdk macosx \
+    archive -archivePath "${archiveDir}" \
+    SYMROOT="${buildDir}" \
+    CONFIGURATION_BUILD_DIR="${configBuildDir}" \
+    SKIP_INSTALL=NO || exit $?
+mkdir -p "${dstDir}"
+rsync -avP --delete --exclude CVS --exclude .svn --exclude .git --exclude .hg --exclude Headers \
+    --exclude PrivateHeaders --exclude Modules --exclude *.tbd --exclude *.meta \
+    "${src}/" "${dstDir}/${name}.bundle/"
