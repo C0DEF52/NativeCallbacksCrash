@@ -20,7 +20,7 @@ typedef struct Argument
 
 typedef void (* __cdecl Callback)(Argument arg);
 
-
+extern char * __cdecl CreateStringFromArg(Argument arg);
 extern void __cdecl SetCallback(Callback callback);
 extern void __cdecl RunCallback(uint32_t argId, float float1, float float2);
 
